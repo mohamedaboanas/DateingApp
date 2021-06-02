@@ -8,7 +8,6 @@ using API.Extensions;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 using System.Linq;
 using API.Helpers;
 
@@ -27,7 +26,8 @@ namespace API.Controllers
             this._userRepository = userRepository;
 
         }
-
+       
+        
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers([FromQuery] UserParams userParams)
         {
@@ -43,8 +43,7 @@ namespace API.Controllers
 
             return Ok(users);
         }
-
-
+        
         [HttpGet("{username}", Name = "GetUser")]
         public async Task<ActionResult<MemberDto>> GetUsers(string username)
         {
