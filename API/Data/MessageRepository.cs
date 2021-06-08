@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using API.DTOs;
 using API.Entities;
@@ -25,7 +24,7 @@ namespace API.Data
 
         public void AddGroup(Group group)
         {
-            throw new System.NotImplementedException();
+            _context.Groups.Add(group);
         }
 
         public void AddMessage(Message message)
@@ -38,14 +37,17 @@ namespace API.Data
             _context.Messages.Remove(message);
         }
 
-        public Task<DbLoggerCategory.Database.Connection> GetConnection(string connectionId)
+        public async Task<Connection> GetConnection(string connectionId)
         {
-            throw new System.NotImplementedException();
+           return await _context.Connections.FindAsync(connectionId);
         }
 
-        public Task<Group> GetGroupForConnection(string connectionId)
+        public async Task<Group> GetGroupForConnection(string connectionId)
         {
-            throw new System.NotImplementedException();
+           return await _context.Groups
+                .Include(c => c.Connections)
+                .Where(c => c.Connections.Any(x => x.ConnectionId == connectionId))
+                .FirstOrDefaultAsync();
         }
 
         public async Task<Message> GetMessage(int id)
@@ -56,9 +58,11 @@ namespace API.Data
                 .SingleOrDefaultAsync(x => x.Id == id);
         }
 
-        public Task<Group> GetMessageGroup(string groupName)
+        public async Task<Group> GetMessageGroup(string groupName)
         {
-            throw new System.NotImplementedException();
+            return await _context.Groups
+                .Include(x => x.Connections)
+                .FirstOrDefaultAsync(x=> x.Name == groupName);
         }      
 
         public async Task<IEnumerable<MessageDto>> GetMessageThread(string currentUsername, string recipientUsername)
@@ -81,7 +85,7 @@ namespace API.Data
             
             if(unreadMeassages.Any()){
                 foreach(var message in unreadMeassages){
-                    message.DateRead = DateTime.Now;
+                    message.DateRead = DateTime.UtcNow;
                 }
                 await _context.SaveChangesAsync();
             }
@@ -89,9 +93,9 @@ namespace API.Data
             return _mapper.Map<IEnumerable<MessageDto>>(messages);
         }
 
-        public void RemoveConnection(DbLoggerCategory.Database.Connection connection)
+        public void RemoveConnection(Connection connection)
         {
-            throw new System.NotImplementedException();
+           _context.Connections.Remove(connection);
         }
 
         public async Task<bool> SaveAllAsync()

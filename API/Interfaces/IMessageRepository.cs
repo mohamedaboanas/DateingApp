@@ -1,10 +1,8 @@
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using API.DTOs;
 using API.Entities;
 using API.Helpers;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace API.Interfaces
 {
