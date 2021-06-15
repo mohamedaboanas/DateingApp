@@ -22,16 +22,17 @@ namespace API.Data
                     .SingleOrDefaultAsync(p => p.Id == id);
         }
 
-        public async Task<IEnumerable<PhotoForApprovalDto>> GetUnapprovedPhotos()
+       public async Task<IEnumerable<PhotoForApprovalDto>> GetUnapprovedPhotos()
         {
             return await _context.Photos
-                .IgnoreQueryFilters()
-                .Where(p => p.IsApproved == false)
-                .Select(u => new PhotoForApprovalDto{
-                    Id  = u.Id,
-                    Username = u.AppUser.UserName,
-                    Url = u.Url,
-                    IsApproved = u.IsApproved
+            .IgnoreQueryFilters()
+            .Where(p => p.IsApproved == false)
+            .Select(u => new PhotoForApprovalDto
+            {
+                Id = u.Id,
+                Username = u.AppUser.UserName,
+                Url = u.Url,
+                IsApproved = u.IsApproved
             }).ToListAsync();
         }
 
